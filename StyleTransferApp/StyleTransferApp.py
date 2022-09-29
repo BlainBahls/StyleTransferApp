@@ -10,4 +10,4 @@ window.mainloop()
 
 
 
-#os.system("python C:\Users\alexb\OneDrive\1SchoolOneDrive\ENGT 4050\fast-style-transfer-master\evaluate.py --dir")
+os.system("python C:\Users\bahls\ENGT4050CapstoneFastStyle\fast-style-transfer-master\fast-style-transfer-master\evaluate.py --dir")
