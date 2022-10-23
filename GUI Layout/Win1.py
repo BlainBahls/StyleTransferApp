@@ -15,7 +15,7 @@ class Win1(QMainWindow):
         self.DescLabel = QLabel("Win1")
         lay.addWidget(self.DescLabel)
         
-        self.FeedLabel = QLabel() #temp comment
+        self.FeedLabel = QLabel()
         lay.addWidget(self.FeedLabel)
 
         #self.CancelBTN = QPushButton("Cancel")
