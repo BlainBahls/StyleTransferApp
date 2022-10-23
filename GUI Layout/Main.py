@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+
 import cv2
 
 class MainWindow(QWidget):
@@ -12,6 +13,9 @@ class MainWindow(QWidget):
 
         self.VBL = QVBoxLayout()
 
+        self.DescLabel = QLabel("Hello World")
+        self.VBL.addWidget(self.DescLabel)
+        
         self.FeedLabel = QLabel()
         self.VBL.addWidget(self.FeedLabel)
 
@@ -20,6 +24,8 @@ class MainWindow(QWidget):
         #self.VBL.addWidget(self.CancelBTN)
 
         #Can add widget
+
+
 
         self.Worker1 = Worker1()
 
