@@ -1,0 +1,23 @@
+<RCC>
+  <qresource prefix="Stylized Images">
+    <file>Stylized Pictures/Stylized Wreck.jpg</file>
+    <file>Stylized Pictures/Stylized Great Wave.jpg</file>
+    <file>Stylized Pictures/Stylized Rain Princess.jpg</file>
+    <file>Stylized Pictures/Stylized Scream.jpg</file>
+    <file>Stylized Pictures/Stylized Starry Night.jpg</file>
+    <file>Stylized Pictures/Stylized Udnie.jpg</file>
+    <file>Stylized Pictures/Stylized La Muse.jpg</file>
+  </qresource>
+  <qresource prefix="Camera Photo">
+    <file>Camera Photo/Input Picture.jpg</file>
+  </qresource>
+  <qresource prefix="Resized Images">
+    <file>Resized Pictures/Great Wave - Resized.jpg</file>
+    <file>Resized Pictures/La Muse - Resized.jpg</file>
+    <file>Resized Pictures/Rain Princess - Resized.jpg</file>
+    <file>Resized Pictures/Scream - Resized.jpg</file>
+    <file>Resized Pictures/Starry Night - Resized.jpg</file>
+    <file>Resized Pictures/Udnie - Resized.jpg</file>
+    <file>Resized Pictures/Wreck - Resized.jpg</file>
+  </qresource>
+</RCC>
