@@ -13,3 +13,4 @@ Win1 = Win1.Win1()
 Win1.show()
 #Win2.show()
 sys.exit(App.exec())
+#suh
