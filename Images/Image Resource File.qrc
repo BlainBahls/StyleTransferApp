@@ -8,6 +8,11 @@
     <file>Stylized Pictures/Stylized Udnie.jpg</file>
     <file>Stylized Pictures/Stylized La Muse.jpg</file>
   </qresource>
+  <qresource prefix="Logos">
+    <file>Logos/index.png</file>
+    <file>Logos/College of Engineering Logo.png</file>
+    <file>Logos/Project Logo.jpg</file>
+  </qresource>
   <qresource prefix="Camera Photo">
     <file>Camera Photo/Input Picture.jpg</file>
   </qresource>
