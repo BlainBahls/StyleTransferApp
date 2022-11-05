@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import sys
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -19,7 +19,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.graphicsView_LaMuse_Original = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_LaMuse_Original.setGeometry(QtCore.QRect(320, 240, 300, 300))
-        self.graphicsView_LaMuse_Original.setStyleSheet("background-image: url(:/Resized Images/Resized Pictures/La Muse - Resized.jpg);")
+        self.graphicsView_LaMuse_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/La Muse - Resized.jpg);")
         self.graphicsView_LaMuse_Original.setObjectName("graphicsView_LaMuse_Original")
         self.ArtWithMachineLearningLabel = QtWidgets.QLabel(self.centralwidget)
         self.ArtWithMachineLearningLabel.setGeometry(QtCore.QRect(0, 0, 2171, 61))
@@ -57,8 +57,7 @@ class Ui_MainWindow(object):
         self.line_3.setObjectName("line_3")
         self.graphicsView_Input_Picture = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Input_Picture.setGeometry(QtCore.QRect(10, 620, 300, 300))
-        self.graphicsView_Input_Picture.setStyleSheet("background-image: url(:/Camera Photo/Camera Photo/Input Picture.jpg);\n"
-"background-image: url(:/Camera Photo/Camera Photo/Input Picture.jpg);")
+        self.graphicsView_Input_Picture.setStyleSheet("background-image: url(:/Camera/Camera Photo/Input Picture.jpg);")
         self.graphicsView_Input_Picture.setObjectName("graphicsView_Input_Picture")
         self.LaMuseLabel = QtWidgets.QLabel(self.centralwidget)
         self.LaMuseLabel.setGeometry(QtCore.QRect(320, 120, 301, 81))
@@ -70,7 +69,7 @@ class Ui_MainWindow(object):
         self.LaMuseLabel.setObjectName("LaMuseLabel")
         self.graphicsView_RainPrincess_Original = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_RainPrincess_Original.setGeometry(QtCore.QRect(630, 240, 300, 300))
-        self.graphicsView_RainPrincess_Original.setStyleSheet("background-image: url(:/Resized Images/Resized Pictures/Rain Princess - Resized.jpg);")
+        self.graphicsView_RainPrincess_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Rain Princess - Resized.jpg);")
         self.graphicsView_RainPrincess_Original.setObjectName("graphicsView_RainPrincess_Original")
         self.PicassoLabel = QtWidgets.QLabel(self.centralwidget)
         self.PicassoLabel.setGeometry(QtCore.QRect(320, 180, 301, 61))
@@ -114,7 +113,7 @@ class Ui_MainWindow(object):
         self.ScreamLabel.setObjectName("ScreamLabel")
         self.graphicsView_Scream_Original = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Scream_Original.setGeometry(QtCore.QRect(940, 240, 300, 300))
-        self.graphicsView_Scream_Original.setStyleSheet("background-image: url(:/Resized Images/Resized Pictures/Scream - Resized.jpg);")
+        self.graphicsView_Scream_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Scream - Resized.jpg);")
         self.graphicsView_Scream_Original.setObjectName("graphicsView_Scream_Original")
         self.VanGoghLabel = QtWidgets.QLabel(self.centralwidget)
         self.VanGoghLabel.setGeometry(QtCore.QRect(1250, 180, 301, 61))
@@ -134,7 +133,7 @@ class Ui_MainWindow(object):
         self.StarryNightLabel.setObjectName("StarryNightLabel")
         self.graphicsView_StarryNight_Original = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_StarryNight_Original.setGeometry(QtCore.QRect(1250, 240, 300, 300))
-        self.graphicsView_StarryNight_Original.setStyleSheet("background-image: url(:/Resized Images/Resized Pictures/Starry Night - Resized.jpg);")
+        self.graphicsView_StarryNight_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Starry Night - Resized.jpg);")
         self.graphicsView_StarryNight_Original.setObjectName("graphicsView_StarryNight_Original")
         self.FrancisPicabiaLabel = QtWidgets.QLabel(self.centralwidget)
         self.FrancisPicabiaLabel.setGeometry(QtCore.QRect(1560, 180, 301, 61))
@@ -154,7 +153,7 @@ class Ui_MainWindow(object):
         self.UdnieLabel.setObjectName("UdnieLabel")
         self.graphicsView_Udnie_Original = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Udnie_Original.setGeometry(QtCore.QRect(1560, 240, 300, 300))
-        self.graphicsView_Udnie_Original.setStyleSheet("background-image: url(:/Resized Images/Resized Pictures/Udnie - Resized.jpg);")
+        self.graphicsView_Udnie_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Udnie - Resized.jpg);")
         self.graphicsView_Udnie_Original.setObjectName("graphicsView_Udnie_Original")
         self.HokusaiLabel = QtWidgets.QLabel(self.centralwidget)
         self.HokusaiLabel.setGeometry(QtCore.QRect(1870, 180, 301, 61))
@@ -174,31 +173,31 @@ class Ui_MainWindow(object):
         self.GreatWaveLabel.setObjectName("GreatWaveLabel")
         self.graphicsView_GreatWave_Original = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_GreatWave_Original.setGeometry(QtCore.QRect(1870, 240, 300, 300))
-        self.graphicsView_GreatWave_Original.setStyleSheet("background-image: url(:/Resized Images/Resized Pictures/Great Wave - Resized.jpg);")
+        self.graphicsView_GreatWave_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Great Wave - Resized.jpg);")
         self.graphicsView_GreatWave_Original.setObjectName("graphicsView_GreatWave_Original")
         self.graphicsView_LaMuse_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_LaMuse_Stylized.setGeometry(QtCore.QRect(320, 620, 300, 300))
-        self.graphicsView_LaMuse_Stylized.setStyleSheet("background-image: url(:/Stylized Images/Stylized Pictures/Stylized La Muse.jpg);")
+        self.graphicsView_LaMuse_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized La Muse.jpg);")
         self.graphicsView_LaMuse_Stylized.setObjectName("graphicsView_LaMuse_Stylized")
         self.graphicsView_Udnie_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Udnie_Stylized.setGeometry(QtCore.QRect(1560, 620, 300, 300))
-        self.graphicsView_Udnie_Stylized.setStyleSheet("background-image: url(:/Stylized Images/Stylized Pictures/Stylized Udnie.jpg);")
+        self.graphicsView_Udnie_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Udnie.jpg);")
         self.graphicsView_Udnie_Stylized.setObjectName("graphicsView_Udnie_Stylized")
         self.graphicsView_GreatWave_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_GreatWave_Stylized.setGeometry(QtCore.QRect(1870, 620, 300, 300))
-        self.graphicsView_GreatWave_Stylized.setStyleSheet("background-image: url(:/Stylized Images/Stylized Pictures/Stylized Great Wave.jpg);")
+        self.graphicsView_GreatWave_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Great Wave.jpg);")
         self.graphicsView_GreatWave_Stylized.setObjectName("graphicsView_GreatWave_Stylized")
         self.graphicsView_RainPrincess_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_RainPrincess_Stylized.setGeometry(QtCore.QRect(630, 620, 300, 300))
-        self.graphicsView_RainPrincess_Stylized.setStyleSheet("background-image: url(:/Stylized Images/Stylized Pictures/Stylized Rain Princess.jpg);")
+        self.graphicsView_RainPrincess_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Rain Princess.jpg);")
         self.graphicsView_RainPrincess_Stylized.setObjectName("graphicsView_RainPrincess_Stylized")
         self.graphicsView_Scream_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Scream_Stylized.setGeometry(QtCore.QRect(940, 620, 300, 300))
-        self.graphicsView_Scream_Stylized.setStyleSheet("background-image: url(:/Stylized Images/Stylized Pictures/Stylized Scream.jpg);")
+        self.graphicsView_Scream_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Scream.jpg);")
         self.graphicsView_Scream_Stylized.setObjectName("graphicsView_Scream_Stylized")
         self.graphicsView_StarryNight_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_StarryNight_Stylized.setGeometry(QtCore.QRect(1250, 620, 300, 300))
-        self.graphicsView_StarryNight_Stylized.setStyleSheet("background-image: url(:/Stylized Images/Stylized Pictures/Stylized Starry Night.jpg);")
+        self.graphicsView_StarryNight_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Starry Night.jpg);")
         self.graphicsView_StarryNight_Stylized.setObjectName("graphicsView_StarryNight_Stylized")
         self.graphicsView_Input_Picture_2 = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Input_Picture_2.setGeometry(QtCore.QRect(10, 240, 300, 300))
@@ -234,7 +233,8 @@ class Ui_MainWindow(object):
         self.UdnieLabel.setText(_translate("MainWindow", "Francis Picabia\'s"))
         self.HokusaiLabel.setText(_translate("MainWindow", "Great Wave"))
         self.GreatWaveLabel.setText(_translate("MainWindow", "Hokusai\'s"))
-import Image Resource File_rc
+#sys.path.insert(1, 'C:/Users/brend/source/repos/BlainBahls/StyleTransferApp/Images/ImageResourceFile.py')
+import ImageResourceFile
 
 
 if __name__ == "__main__":
