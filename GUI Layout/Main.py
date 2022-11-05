@@ -16,43 +16,39 @@ Win1 = Win1.Win1()
 Win2 = Win2.Win2()
 #Win1.show()
 #Win2.show()
-currentWindow = 1
+#currentWindow = 1
 
 #timer.start(5000)
 #-----------------------------------------------------------------------------------------|
-def cameraFeed():
-    Win1.show()
 
-def pictureCycle():
-    Win2.show()
 
 # Create a function that will print the time
-def create_countdown_timer(time):
-    print(time,"......")
+#def create_countdown_timer(time):
+#    print(time,"......")
 
-time_in_sec=5
-App.exec()
-while True:
+#time_in_sec=5
+#App.exec()
+#while True:
     
-    for times in range(time_in_sec):
-        # call the function and pass the current time left
-        create_countdown_timer(time_in_sec-times)
-        # call the function in every 1 second.
-        time.sleep(1)
+#    for times in range(time_in_sec):
+#        # call the function and pass the current time left
+#        create_countdown_timer(time_in_sec-times)
+#        # call the function in every 1 second.
+#        time.sleep(1)
   
-    print("Time is up. Execute Window Activation here: \nPicture is Taken.")
-    print("Windows 1 ceases and Window 2 is activated to show stylized picture.")
-    cameraFeed()
+#    print("Time is up. Execute Window Activation here: \nPicture is Taken.")
+#    print("Windows 1 ceases and Window 2 is activated to show stylized picture.")
+#    cameraFeed()
     
-    for times in range(time_in_sec):
-        # call the function and pass the current time left
-        create_countdown_timer(time_in_sec-times)
-        # call the function in every 1 second.
-        time.sleep(1)
+#    for times in range(time_in_sec):
+#        # call the function and pass the current time left
+#        create_countdown_timer(time_in_sec-times)
+#        # call the function in every 1 second.
+#        time.sleep(1)
 
-    print("Time is up. Execute Window Activation here:\nMove back to Live Camera Feed.")
-    print("Windows 2 ceases and Window 1 is activated.")
-    pictureCycle()
+#    print("Time is up. Execute Window Activation here:\nMove back to Live Camera Feed.")
+#    print("Windows 2 ceases and Window 1 is activated.")
+#    pictureCycle()
 #------------------------------------------------------------------------------------------|    
     #def func1():
     #    print("This is window 1.","\n")

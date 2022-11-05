@@ -4,12 +4,14 @@ from PyQt5.QtWidgets import QApplication,  QWidget,  QLabel, QMainWindow, QPushB
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from PyQt5.QtCore import QThread, pyqtSignal
 import cv2
+import Win2
 
 
 class Win1(QMainWindow):
     def __init__(self):
-        super(Win1, self).__init__()
+        super(self.__class__, self).__init__()
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -24,6 +26,9 @@ class Win1(QMainWindow):
         #self.CancelBTN.clicked.connect(self.CancelFeed)
         #self.VBL.addWidget(self.CancelBTN)
 
+
+
+
         self.Worker1 = Worker1()
         self.Worker2 = Worker2()
 
@@ -34,14 +39,7 @@ class Win1(QMainWindow):
 
 
         self.Worker2.start()
-        self.timer.setInterval(5000)
-        self.timer.moveToThread(self.Worker2)
-    
-    def showWin2(self):
-        Win2 = Win2.Win2()
-        Win2.show()
-        print ("Collecting Process Data")
-        #Worker1.run()
+   
 
     def ImageUpdateSlot(self, Image):
         self.FeedLabel.setPixmap(QPixmap.fromImage(Image))
@@ -67,21 +65,22 @@ class Worker1(QThread):
         self.quit()
 
 class Worker2(QThread):
+    def showWin2(self):
+        Window2 = Win2.Win2()
+        Window2.show()
+        
+
     def __init__(self, *args, **kwargs):
         QThread.__init__(self, *args, **kwargs)
-        self.timer = QTimer()
+        self.timer = PyQt5.QtCore.QTimer()
         self.timer.moveToThread(self)
-        self.timer.timeout.connect(self.timer)
+        self.timer.timeout.connect(self.showWin2)
 
 
     def run(self):
-        self.timer.start(1000)
-
+        self.timer.start(5000)
         #loop = QEventLoop()
         #loop.exec_()
-        
-    #def run(self):
-    #    self.timer.start(5000);
 
     def stop(self):
         self.ThreadActive = False
