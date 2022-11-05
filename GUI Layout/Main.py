@@ -92,7 +92,8 @@ def pictureCycle():
 
 
 #Win2.show()
-cameraFeed()
+#cameraFeed()
+#pictureCycle()
 #pictureCycle()
 sys.exit(App.exec())
 #suh
