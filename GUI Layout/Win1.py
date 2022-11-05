@@ -67,8 +67,8 @@ class Worker1(QThread):
 class Worker2(QThread):
     def showWin2(self):
         print("It's working!")
-        #Window2 = Win2.Win2()
-        #Window2.show()
+        Window2 = Win2.Win2()
+        Window2.show()
         
 
     def __init__(self, *args, **kwargs):
