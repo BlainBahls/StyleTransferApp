@@ -66,8 +66,9 @@ class Worker1(QThread):
 
 class Worker2(QThread):
     def showWin2(self):
-        Window2 = Win2.Win2()
-        Window2.show()
+        print("It's working!")
+        #Window2 = Win2.Win2()
+        #Window2.show()
         
 
     def __init__(self, *args, **kwargs):
@@ -79,8 +80,8 @@ class Worker2(QThread):
 
     def run(self):
         self.timer.start(5000)
-        #loop = QEventLoop()
-        #loop.exec_()
+        loop = QEventLoop()
+        loop.exec_()
 
     def stop(self):
         self.ThreadActive = False
