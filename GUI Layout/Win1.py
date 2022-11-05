@@ -11,7 +11,7 @@ import Win2
 
 class Win1(QMainWindow):
     def __init__(self):
-        super(self.__class__, self).__init__()
+        super().__init__()
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
