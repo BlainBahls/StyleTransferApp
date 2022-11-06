@@ -16,16 +16,17 @@ class VideoThread(QThread):
     def __init__(self):
         super().__init__()
         self._run_flag = True
+        self.cap = cv2.VideoCapture(0)
 
     def run(self):
         # capture from web cam
-        cap = cv2.VideoCapture(0)
+        
         while self._run_flag:
-            ret, cv_img = cap.read()
+            ret, cv_img = self.cap.read()
             if ret:
                 self.change_pixmap_signal.emit(cv_img)
         # shut down capture system
-        cap.release()
+        self.cap.release()
 
     def stop(self):
         """Sets run flag to False and waits for thread to finish"""
@@ -39,11 +40,29 @@ class Thread2(QThread):
         super().__init__()
         self._run_flag = True
         self.timer = QTimer()
-        self.timer.start(5000) #normal value = 15000
+        self.timer.start(5000) #normal value = 20000
         
     def run(self):
         print("Hello World")
         self.timer.timeout.connect(self.timer_finished)
+
+    def stop(self):
+        print("World Hello")
+        self._run_flag = False
+        self.wait()
+
+class Thread3(QThread):
+    Milisecondtimer_finished = pyqtSignal()
+
+    def __init__(self):
+        super().__init__()
+        self._run_flag = True
+        self.timer = QTimer()
+        self.timer.start(1)
+        
+    def run(self):
+        print("Hello World")
+        self.timer.timeout.connect(self.Milisecondtimer_finished)
 
     def stop(self):
         print("World Hello")
@@ -75,7 +94,7 @@ class App(QWidget):
         #self.showFullScreen()
         self.showFullScreen()
 
-        self.window2 = Ui_SecondWindow()
+        #self.window2 = Ui_SecondWindow()
 
         # create the video capture thread
         self.thread = VideoThread()
@@ -86,8 +105,13 @@ class App(QWidget):
             
         self.thread2 = Thread2()
         self.currentWindow = 1
-        self.thread2.timer_finished.connect(self.changeWindow)
+        self.thread2.timer_finished.connect(self.capturePicture)
+        #self.thread2.timer_finished.connect(self.changeWindow)
         self.thread2.start()
+
+        #self.thread3 = Thread3()
+        #self.thread3.Milisecondtimer_finished.connect(self.changeWindow)
+        #self.thread3.start()
 
     def closeEvent(self, event):
         self.thread.stop()
@@ -108,30 +132,37 @@ class App(QWidget):
         p = convert_to_Qt_format.scaled(self.disply_width, self.display_height, Qt.KeepAspectRatio)
         return QPixmap.fromImage(p)
     
+    def capturePicture(self):
+            ret,frame = self.thread.cap.read()
+            cv2.imwrite('images/Camera Photo/Input Picture.jpg',frame)
+            Window.Second_Window = Window()
+            Ui_SecondWindow.ui = Ui_SecondWindow()
+            Ui_SecondWindow.ui.setupUi(Window.Second_Window)
+            App.changeWindow(self)
+
     def changeWindow(self):
         if self.currentWindow == 1:
-            SecondWindow.showFullScreen()
+            Window.Second_Window.showFullScreen()
             self.currentWindow = 2
-        else:
-            SecondWindow.showMinimized()
+
+        elif self.currentWindow == 2:
+            Window.Second_Window.showMinimized()
             self.currentWindow = 1
 
 
     #def showWindow1(self):
     #    self.window2.destroy()
        
-#class SecondWindow(QMainWindow):
-#    def __init__(self):
-#        super(self.__class__, self).__init__()
-
-#        self.central_widget = Ui_SecondWindow()
-#        self.setCentralWidget(self.central_widget)
+class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
 
 class Ui_SecondWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(2175, 962)
+        
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.graphicsView_LaMuse_Original = QtWidgets.QGraphicsView(self.centralwidget)
@@ -140,6 +171,7 @@ class Ui_SecondWindow(object):
         self.graphicsView_LaMuse_Original.setObjectName("graphicsView_LaMuse_Original")
         self.ArtWithMachineLearningLabel = QtWidgets.QLabel(self.centralwidget)
         self.ArtWithMachineLearningLabel.setGeometry(QtCore.QRect(0, 0, 2171, 61))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
         font.setPointSize(36)
@@ -153,6 +185,7 @@ class Ui_SecondWindow(object):
         self.line_2.setObjectName("line_2")
         self.OriginalStyleLabel = QtWidgets.QLabel(self.centralwidget)
         self.OriginalStyleLabel.setGeometry(QtCore.QRect(0, 60, 2171, 61))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
         font.setPointSize(36)
@@ -161,9 +194,10 @@ class Ui_SecondWindow(object):
         self.OriginalStyleLabel.setObjectName("OriginalStyleLabel")
         self.YourStylizedResultsLabel = QtWidgets.QLabel(self.centralwidget)
         self.YourStylizedResultsLabel.setGeometry(QtCore.QRect(0, 550, 2171, 61))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)       
         self.YourStylizedResultsLabel.setFont(font)
         self.YourStylizedResultsLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.YourStylizedResultsLabel.setObjectName("YourStylizedResultsLabel")
@@ -174,13 +208,14 @@ class Ui_SecondWindow(object):
         self.line_3.setObjectName("line_3")
         self.graphicsView_Input_Picture = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Input_Picture.setGeometry(QtCore.QRect(10, 620, 300, 300))
-        self.graphicsView_Input_Picture.setStyleSheet("background-image: url(:/Camera/Camera Photo/Input Picture.jpg);")
+        self.graphicsView_Input_Picture.setStyleSheet("background-image: url(C:/Users/bahls/source/repos/StyleTransferApp/Images/Camera Photo/Input Picture.jpg);")
         self.graphicsView_Input_Picture.setObjectName("graphicsView_Input_Picture")
         self.LaMuseLabel = QtWidgets.QLabel(self.centralwidget)
         self.LaMuseLabel.setGeometry(QtCore.QRect(320, 120, 301, 81))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)        
         self.LaMuseLabel.setFont(font)
         self.LaMuseLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.LaMuseLabel.setObjectName("LaMuseLabel")
@@ -190,6 +225,7 @@ class Ui_SecondWindow(object):
         self.graphicsView_RainPrincess_Original.setObjectName("graphicsView_RainPrincess_Original")
         self.PicassoLabel = QtWidgets.QLabel(self.centralwidget)
         self.PicassoLabel.setGeometry(QtCore.QRect(320, 180, 301, 61))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
         font.setPointSize(36)
@@ -198,33 +234,37 @@ class Ui_SecondWindow(object):
         self.PicassoLabel.setObjectName("PicassoLabel")
         self.RainPrincessLabel = QtWidgets.QLabel(self.centralwidget)
         self.RainPrincessLabel.setGeometry(QtCore.QRect(630, 120, 301, 81))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)        
         self.RainPrincessLabel.setFont(font)
         self.RainPrincessLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.RainPrincessLabel.setObjectName("RainPrincessLabel")
         self.LeonidAfremovLabel = QtWidgets.QLabel(self.centralwidget)
         self.LeonidAfremovLabel.setGeometry(QtCore.QRect(630, 180, 301, 61))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)        
         self.LeonidAfremovLabel.setFont(font)
         self.LeonidAfremovLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.LeonidAfremovLabel.setObjectName("LeonidAfremovLabel")
         self.EdvardMunchLabel = QtWidgets.QLabel(self.centralwidget)
         self.EdvardMunchLabel.setGeometry(QtCore.QRect(940, 180, 301, 61))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36) 
         self.EdvardMunchLabel.setFont(font)
         self.EdvardMunchLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.EdvardMunchLabel.setObjectName("EdvardMunchLabel")
         self.ScreamLabel = QtWidgets.QLabel(self.centralwidget)
         self.ScreamLabel.setGeometry(QtCore.QRect(940, 120, 301, 81))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)        
         self.ScreamLabel.setFont(font)
         self.ScreamLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.ScreamLabel.setObjectName("ScreamLabel")
@@ -234,17 +274,19 @@ class Ui_SecondWindow(object):
         self.graphicsView_Scream_Original.setObjectName("graphicsView_Scream_Original")
         self.VanGoghLabel = QtWidgets.QLabel(self.centralwidget)
         self.VanGoghLabel.setGeometry(QtCore.QRect(1250, 180, 301, 61))
+       
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)        
         self.VanGoghLabel.setFont(font)
         self.VanGoghLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.VanGoghLabel.setObjectName("VanGoghLabel")
         self.StarryNightLabel = QtWidgets.QLabel(self.centralwidget)
         self.StarryNightLabel.setGeometry(QtCore.QRect(1250, 120, 301, 81))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)       
         self.StarryNightLabel.setFont(font)
         self.StarryNightLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.StarryNightLabel.setObjectName("StarryNightLabel")
@@ -254,17 +296,19 @@ class Ui_SecondWindow(object):
         self.graphicsView_StarryNight_Original.setObjectName("graphicsView_StarryNight_Original")
         self.FrancisPicabiaLabel = QtWidgets.QLabel(self.centralwidget)
         self.FrancisPicabiaLabel.setGeometry(QtCore.QRect(1560, 180, 301, 61))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)        
         self.FrancisPicabiaLabel.setFont(font)
         self.FrancisPicabiaLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.FrancisPicabiaLabel.setObjectName("FrancisPicabiaLabel")
         self.UdnieLabel = QtWidgets.QLabel(self.centralwidget)
         self.UdnieLabel.setGeometry(QtCore.QRect(1560, 120, 301, 81))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)        
         self.UdnieLabel.setFont(font)
         self.UdnieLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.UdnieLabel.setObjectName("UdnieLabel")
@@ -274,17 +318,19 @@ class Ui_SecondWindow(object):
         self.graphicsView_Udnie_Original.setObjectName("graphicsView_Udnie_Original")
         self.HokusaiLabel = QtWidgets.QLabel(self.centralwidget)
         self.HokusaiLabel.setGeometry(QtCore.QRect(1870, 180, 301, 61))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)       
         self.HokusaiLabel.setFont(font)
         self.HokusaiLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.HokusaiLabel.setObjectName("HokusaiLabel")
         self.GreatWaveLabel = QtWidgets.QLabel(self.centralwidget)
         self.GreatWaveLabel.setGeometry(QtCore.QRect(1870, 120, 301, 81))
+        
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
-        font.setPointSize(36)
+        font.setPointSize(36)        
         self.GreatWaveLabel.setFont(font)
         self.GreatWaveLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.GreatWaveLabel.setObjectName("GreatWaveLabel")
@@ -292,6 +338,7 @@ class Ui_SecondWindow(object):
         self.graphicsView_GreatWave_Original.setGeometry(QtCore.QRect(1870, 240, 300, 300))
         self.graphicsView_GreatWave_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Great Wave - Resized.jpg);")
         self.graphicsView_GreatWave_Original.setObjectName("graphicsView_GreatWave_Original")
+        
         self.graphicsView_LaMuse_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_LaMuse_Stylized.setGeometry(QtCore.QRect(320, 620, 300, 300))
         self.graphicsView_LaMuse_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized La Muse.jpg);")
@@ -316,10 +363,12 @@ class Ui_SecondWindow(object):
         self.graphicsView_StarryNight_Stylized.setGeometry(QtCore.QRect(1250, 620, 300, 300))
         self.graphicsView_StarryNight_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Starry Night.jpg);")
         self.graphicsView_StarryNight_Stylized.setObjectName("graphicsView_StarryNight_Stylized")
+        
         self.graphicsView_Input_Picture_2 = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Input_Picture_2.setGeometry(QtCore.QRect(10, 240, 300, 300))
         self.graphicsView_Input_Picture_2.setStyleSheet("background-image: url(:/Logos/Logos/index.png);")
         self.graphicsView_Input_Picture_2.setObjectName("graphicsView_Input_Picture_2")
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 2175, 21))
@@ -356,8 +405,8 @@ import ImageResourceFile
 if __name__=="__main__":
     app = QApplication(sys.argv)
     a = App()
-    SecondWindow = QtWidgets.QMainWindow()
+    Second_Window = Window()
     ui = Ui_SecondWindow()
-    ui.setupUi(SecondWindow)
+    ui.setupUi(Second_Window)
     a.show()
     sys.exit(app.exec_())
