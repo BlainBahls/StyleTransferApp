@@ -51,24 +51,6 @@ class Thread2(QThread):
         self._run_flag = False
         self.wait()
 
-class Thread3(QThread):
-    Milisecondtimer_finished = pyqtSignal()
-
-    def __init__(self):
-        super().__init__()
-        self._run_flag = True
-        self.timer = QTimer()
-        self.timer.start(1)
-        
-    def run(self):
-        print("Hello World")
-        self.timer.timeout.connect(self.Milisecondtimer_finished)
-
-    def stop(self):
-        print("World Hello")
-        self._run_flag = False
-        self.wait()
-
 class App(QWidget):
     def __init__(self):
         super().__init__()
@@ -94,8 +76,6 @@ class App(QWidget):
         #self.showFullScreen()
         self.showFullScreen()
 
-        #self.window2 = Ui_SecondWindow()
-
         # create the video capture thread
         self.thread = VideoThread()
         # connect its signal to the update_image slot
@@ -106,12 +86,7 @@ class App(QWidget):
         self.thread2 = Thread2()
         self.currentWindow = 1
         self.thread2.timer_finished.connect(self.capturePicture)
-        #self.thread2.timer_finished.connect(self.changeWindow)
         self.thread2.start()
-
-        #self.thread3 = Thread3()
-        #self.thread3.Milisecondtimer_finished.connect(self.changeWindow)
-        #self.thread3.start()
 
     def closeEvent(self, event):
         self.thread.stop()
@@ -149,10 +124,6 @@ class App(QWidget):
             Window.Second_Window.showMinimized()
             self.currentWindow = 1
 
-
-    #def showWindow1(self):
-    #    self.window2.destroy()
-       
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -399,7 +370,6 @@ class Ui_SecondWindow(object):
         self.UdnieLabel.setText(_translate("MainWindow", "Francis Picabia\'s"))
         self.HokusaiLabel.setText(_translate("MainWindow", "Great Wave"))
         self.GreatWaveLabel.setText(_translate("MainWindow", "Hokusai\'s"))
-#sys.path.insert(1, 'C:/Users/brend/source/repos/BlainBahls/StyleTransferApp/Images/ImageResourceFile.py')
 import ImageResourceFile
 
 if __name__=="__main__":
