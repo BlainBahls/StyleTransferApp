@@ -9,6 +9,7 @@ import numpy as np
 from time import sleep
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
+import os
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -110,6 +111,9 @@ class App(QWidget):
     def capturePicture(self):
             ret,frame = self.thread.cap.read()
             cv2.imwrite('images/Camera Photo/Input Picture.jpg',frame)
+
+            os.system("%run evaluate.py --checkpoint "chckpnts/Mona Lisa" --in-path "test/628b566d52d7d3705d2291fc_11 best selfie poses.jpeg" --out-path outpath")
+
             Window.Second_Window = Window()
             Ui_SecondWindow.ui = Ui_SecondWindow()
             Ui_SecondWindow.ui.setupUi(Window.Second_Window)
