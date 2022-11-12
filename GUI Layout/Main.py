@@ -112,7 +112,7 @@ class App(QWidget):
             ret,frame = self.thread.cap.read()
             cv2.imwrite('images/Camera Photo/Input Picture.jpg',frame)
 
-            os.system("%run evaluate.py --checkpoint "chckpnts/Mona Lisa" --in-path "test/628b566d52d7d3705d2291fc_11 best selfie poses.jpeg" --out-path outpath")
+            os.system('%run evaluate.py --checkpoint "chckpnts/Mona Lisa" --in-path "test/" --out-path outpath')
 
             Window.Second_Window = Window()
             Ui_SecondWindow.ui = Ui_SecondWindow()
