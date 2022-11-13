@@ -10,6 +10,7 @@ from time import sleep
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 import os
+import subprocess
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -112,7 +113,17 @@ class App(QWidget):
             ret,frame = self.thread.cap.read()
             cv2.imwrite('images/Camera Photo/Input Picture.jpg',frame)
 
-            os.system('%run evaluate.py --checkpoint "chckpnts/Mona Lisa" --in-path "test/" --out-path outpath')
+            #os.system('python "Program Actions/evaluate.py" --checkpoint "/Checkpoints/la_muse.ckpt" \
+            #    --in-path "/Images/Camera Photo/Input Picture.jpg" \
+            #    --out-path "/Images/Stylized Pictures/Stylized La Muse.jpg"')
+
+
+
+            subprocess.Popen(
+                'python "Program Actions/evaluate.py" \
+                --checkpoint "Checkpoints/la_muse.ckpt" \
+                --in-path "Images/Camera Photo/Input Picture.jpg" \
+                --out-path "Images/Stylized Pictures/Stylized La Muse.jpg"')
 
             Window.Second_Window = Window()
             Ui_SecondWindow.ui = Ui_SecondWindow()

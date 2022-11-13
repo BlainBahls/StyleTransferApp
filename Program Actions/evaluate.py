@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sys
 sys.path.insert(0, 'src')
-import transform, numpy as np, vgg, pdb, os
+import transform, numpy as np, pdb, os
 import scipy.misc
 import tensorflow as tf
 from utils import save_img, get_img, exists, list_files

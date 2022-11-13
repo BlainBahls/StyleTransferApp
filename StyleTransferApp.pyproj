@@ -26,7 +26,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="GUI Layout" />
+    <Folder Include="Checkpoints\" />
     <Folder Include="Program Actions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Checkpoints\la_muse.ckpt" />
+    <Content Include="Checkpoints\rain_princess.ckpt" />
+    <Content Include="Checkpoints\scream.ckpt" />
+    <Content Include="Checkpoints\udnie.ckpt" />
+    <Content Include="Checkpoints\wave.ckpt" />
+    <Content Include="Checkpoints\wreck.ckpt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
