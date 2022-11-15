@@ -42,7 +42,7 @@ class Thread2(QThread):
         super().__init__()
         self._run_flag = True
         self.timer = QTimer()
-        self.timer.start(5000) #normal value = 20000
+        self.timer.start(20000) #normal value = 20000
         
     def run(self):
         print("Hello World")
@@ -113,11 +113,11 @@ class App(QWidget):
             ret,frame = self.thread.cap.read()
             cv2.imwrite('images/Camera Photo/Input Picture.jpg',frame)
 
-            #os.system('python "Program Actions/evaluate.py" --checkpoint "/Checkpoints/la_muse.ckpt" \
-            #    --in-path "/Images/Camera Photo/Input Picture.jpg" \
-            #    --out-path "/Images/Stylized Pictures/Stylized La Muse.jpg"')
-
-
+            subprocess.Popen(
+                'python "Program Actions/evaluate.py" \
+                --checkpoint "Checkpoints/wave.ckpt" \
+                --in-path "Images/Camera Photo/Input Picture.jpg" \
+                --out-path "Images/Stylized Pictures/Stylized Great Wave.jpg"')
 
             subprocess.Popen(
                 'python "Program Actions/evaluate.py" \
@@ -125,11 +125,35 @@ class App(QWidget):
                 --in-path "Images/Camera Photo/Input Picture.jpg" \
                 --out-path "Images/Stylized Pictures/Stylized La Muse.jpg"')
 
+            subprocess.Popen(
+                'python "Program Actions/evaluate.py" \
+                --checkpoint "Checkpoints/rain_princess.ckpt" \
+                --in-path "Images/Camera Photo/Input Picture.jpg" \
+                --out-path "Images/Stylized Pictures/Stylized Rain Princess.jpg"')
+
+            subprocess.Popen(
+                'python "Program Actions/evaluate.py" \
+                --checkpoint "Checkpoints/scream.ckpt" \
+                --in-path "Images/Camera Photo/Input Picture.jpg" \
+                --out-path "Images/Stylized Pictures/Stylized Scream.jpg"')
+
+            subprocess.Popen(
+                'python "Program Actions/evaluate.py" \
+                --checkpoint "Checkpoints/udnie.ckpt" \
+                --in-path "Images/Camera Photo/Input Picture.jpg" \
+                --out-path "Images/Stylized Pictures/Stylized Udnie.jpg"')
+
+            subprocess.Popen(
+                'python "Program Actions/evaluate.py" \
+                --checkpoint "Checkpoints/wreck.ckpt" \
+                --in-path "Images/Camera Photo/Input Picture.jpg" \
+                --out-path "Images/Stylized Pictures/Stylized Wreck.jpg"')
+
             Window.Second_Window = Window()
             Ui_SecondWindow.ui = Ui_SecondWindow()
             Ui_SecondWindow.ui.setupUi(Window.Second_Window)
             App.changeWindow(self)
-
+    
     def changeWindow(self):
         if self.currentWindow == 1:
             Window.Second_Window.showFullScreen()
@@ -196,7 +220,7 @@ class Ui_SecondWindow(object):
         
         self.graphicsView_Input_Picture = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Input_Picture.setGeometry(QtCore.QRect(10, 620, 300, 300))
-        self.graphicsView_Input_Picture.setStyleSheet("background-image: url(C:/Users/bahls/source/repos/StyleTransferApp/Images/Camera Photo/Input Picture.jpg);")
+        self.graphicsView_Input_Picture.setStyleSheet("background-image: url(Images/Camera Photo/Input Picture.jpg);")
         self.graphicsView_Input_Picture.setObjectName("graphicsView_Input_Picture")
         
         self.LaMuseLabel = QtWidgets.QLabel(self.centralwidget)
@@ -272,19 +296,19 @@ class Ui_SecondWindow(object):
         self.VanGoghLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.VanGoghLabel.setObjectName("VanGoghLabel")
         
-        self.StarryNightLabel = QtWidgets.QLabel(self.centralwidget)
-        self.StarryNightLabel.setGeometry(QtCore.QRect(1250, 120, 301, 81))
+        self.WreckLabel = QtWidgets.QLabel(self.centralwidget)
+        self.WreckLabel.setGeometry(QtCore.QRect(1250, 120, 301, 81))
         font = QtGui.QFont()
         font.setFamily("Vladimir Script")
         font.setPointSize(36)       
-        self.StarryNightLabel.setFont(font)
-        self.StarryNightLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.StarryNightLabel.setObjectName("StarryNightLabel")
+        self.WreckLabel.setFont(font)
+        self.WreckLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.WreckLabel.setObjectName("WreckLabel")
         
-        self.graphicsView_StarryNight_Original = QtWidgets.QGraphicsView(self.centralwidget)
-        self.graphicsView_StarryNight_Original.setGeometry(QtCore.QRect(1250, 240, 300, 300))
-        self.graphicsView_StarryNight_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Starry Night - Resized.jpg);")
-        self.graphicsView_StarryNight_Original.setObjectName("graphicsView_StarryNight_Original")
+        self.graphicsView_Wreck_Original = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Wreck_Original.setGeometry(QtCore.QRect(1250, 240, 300, 300))
+        self.graphicsView_Wreck_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Wreck - Resized.jpg);")
+        self.graphicsView_Wreck_Original.setObjectName("graphicsView_Wreck_Original")
         
         self.FrancisPicabiaLabel = QtWidgets.QLabel(self.centralwidget)
         self.FrancisPicabiaLabel.setGeometry(QtCore.QRect(1560, 180, 301, 61))
@@ -332,33 +356,33 @@ class Ui_SecondWindow(object):
         
         self.graphicsView_LaMuse_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_LaMuse_Stylized.setGeometry(QtCore.QRect(320, 620, 300, 300))
-        self.graphicsView_LaMuse_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized La Muse.jpg);")
+        self.graphicsView_LaMuse_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized La Muse.jpg);")
         self.graphicsView_LaMuse_Stylized.setObjectName("graphicsView_LaMuse_Stylized")
         
         self.graphicsView_Udnie_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Udnie_Stylized.setGeometry(QtCore.QRect(1560, 620, 300, 300))
-        self.graphicsView_Udnie_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Udnie.jpg);")
+        self.graphicsView_Udnie_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Udnie.jpg);")
         self.graphicsView_Udnie_Stylized.setObjectName("graphicsView_Udnie_Stylized")
         
         self.graphicsView_GreatWave_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_GreatWave_Stylized.setGeometry(QtCore.QRect(1870, 620, 300, 300))
-        self.graphicsView_GreatWave_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Great Wave.jpg);")
+        self.graphicsView_GreatWave_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Great Wave.jpg);")
         self.graphicsView_GreatWave_Stylized.setObjectName("graphicsView_GreatWave_Stylized")
         
         self.graphicsView_RainPrincess_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_RainPrincess_Stylized.setGeometry(QtCore.QRect(630, 620, 300, 300))
-        self.graphicsView_RainPrincess_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Rain Princess.jpg);")
+        self.graphicsView_RainPrincess_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Rain Princess.jpg);")
         self.graphicsView_RainPrincess_Stylized.setObjectName("graphicsView_RainPrincess_Stylized")
         
         self.graphicsView_Scream_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Scream_Stylized.setGeometry(QtCore.QRect(940, 620, 300, 300))
-        self.graphicsView_Scream_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Scream.jpg);")
+        self.graphicsView_Scream_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Scream.jpg);")
         self.graphicsView_Scream_Stylized.setObjectName("graphicsView_Scream_Stylized")
         
-        self.graphicsView_StarryNight_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
-        self.graphicsView_StarryNight_Stylized.setGeometry(QtCore.QRect(1250, 620, 300, 300))
-        self.graphicsView_StarryNight_Stylized.setStyleSheet("background-image: url(:/Stylized/Stylized Pictures/Stylized Starry Night.jpg);")
-        self.graphicsView_StarryNight_Stylized.setObjectName("graphicsView_StarryNight_Stylized")
+        self.graphicsView_Wreck_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Wreck_Stylized.setGeometry(QtCore.QRect(1250, 620, 300, 300))
+        self.graphicsView_Wreck_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Wreck.jpg);")
+        self.graphicsView_Wreck_Stylized.setObjectName("graphicsView_Wreck_Stylized")
         
         self.graphicsView_Input_Picture_2 = QtWidgets.QGraphicsView(self.centralwidget)
         self.graphicsView_Input_Picture_2.setGeometry(QtCore.QRect(10, 240, 300, 300))
@@ -389,8 +413,8 @@ class Ui_SecondWindow(object):
         self.LeonidAfremovLabel.setText(_translate("MainWindow", "Rain Princess"))
         self.EdvardMunchLabel.setText(_translate("MainWindow", "The Scream"))
         self.ScreamLabel.setText(_translate("MainWindow", "Edvard Munch\'s"))
-        self.VanGoghLabel.setText(_translate("MainWindow", "Starry Night"))
-        self.StarryNightLabel.setText(_translate("MainWindow", "Van Gogh\'s"))
+        self.VanGoghLabel.setText(_translate("MainWindow", "Wreck"))
+        self.WreckLabel.setText(_translate("MainWindow", "Van Gogh\'s"))
         self.FrancisPicabiaLabel.setText(_translate("MainWindow", "Udnie"))
         self.UdnieLabel.setText(_translate("MainWindow", "Francis Picabia\'s"))
         self.HokusaiLabel.setText(_translate("MainWindow", "Great Wave"))
