@@ -1,16 +1,11 @@
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import *
-import sys
-import cv2
+from PyQt5 import QtCore, QtGui, QtWidgets,uic
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import *
 import numpy as np
-from time import sleep
-from PyQt5 import QtCore, QtGui, QtWidgets
-import sys
-import os
 import subprocess
+import cv2
+import sys
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -110,6 +105,7 @@ class App(QWidget):
         return QPixmap.fromImage(p)
     
     def capturePicture(self):
+        if self.currentWindow == 1:
             ret,frame = self.thread.cap.read()
             cv2.imwrite('images/Camera Photo/Input Picture.jpg',frame)
 
@@ -149,18 +145,25 @@ class App(QWidget):
                 --in-path "Images/Camera Photo/Input Picture.jpg" \
                 --out-path "Images/Stylized Pictures/Stylized Wreck.jpg"')
 
-            Window.Second_Window = Window()
-            Ui_SecondWindow.ui = Ui_SecondWindow()
-            Ui_SecondWindow.ui.setupUi(Window.Second_Window)
-            App.changeWindow(self)
+        elif self.currentWindow == 2:
+            Window.stylizedWin = Window()
+            Ui_StylizedWindow.ui = Ui_StylizedWindow()
+            Ui_StylizedWindow.ui.setupUi(Window.stylizedWin)
+
+        App.changeWindow(self)
     
     def changeWindow(self):
         if self.currentWindow == 1:
-            Window.Second_Window.showFullScreen()
+            creditsWin.showFullScreen()
             self.currentWindow = 2
 
         elif self.currentWindow == 2:
-            Window.Second_Window.showMinimized()
+            creditsWin.showMinimized()
+            Window.stylizedWin.showFullScreen()
+            self.currentWindow = 3
+
+        elif self.currentWindow == 3:
+            Window.stylizedWin.showMinimized()
             self.currentWindow = 1
 
 class Window(QMainWindow):
@@ -168,7 +171,7 @@ class Window(QMainWindow):
         super().__init__()
 
 
-class Ui_SecondWindow(object):
+class Ui_StylizedWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(2175, 962)
@@ -421,11 +424,17 @@ class Ui_SecondWindow(object):
         self.GreatWaveLabel.setText(_translate("MainWindow", "Hokusai\'s"))
 import ImageResourceFile
 
+class CreditsWindow(QMainWindow):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi("GUI Layout/CreditsWindow.ui", self)
+
 if __name__=="__main__":
     app = QApplication(sys.argv)
     a = App()
-    Second_Window = Window()
-    ui = Ui_SecondWindow()
-    ui.setupUi(Second_Window)
+    stylizedWin = Window()
+    ui = Ui_StylizedWindow()
+    ui.setupUi(stylizedWin)
+    creditsWin = CreditsWindow()
     a.show()
     sys.exit(app.exec_())
