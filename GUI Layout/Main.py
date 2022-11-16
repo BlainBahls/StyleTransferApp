@@ -1,9 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets,uic
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread, QTimer
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 import numpy as np
 import subprocess
+import time
 import cv2
 import sys
 
