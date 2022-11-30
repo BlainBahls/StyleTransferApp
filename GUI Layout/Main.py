@@ -1,3 +1,4 @@
+from typing_extensions import Self
 from PyQt5 import QtCore, QtGui, QtWidgets,uic
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread, QTimer
 from PyQt5.QtGui import QPixmap
@@ -8,6 +9,8 @@ import subprocess
 import time
 import cv2
 import sys
+
+DURATION_INT = 15
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -53,39 +56,83 @@ class Thread2(QThread):
 class App(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.time_left_int = DURATION_INT
+        self.widget_counter_int = 0
+
         self.setWindowTitle("Qt live label demo")
         self.disply_width = 1920
         self.display_height = 1080
-        # create the label that holds the image
+        
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(24)
+
         self.image_label = QLabel(self)
         self.image_label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.image_label.resize(self.disply_width, self.display_height)
-        # create a text label
-        self.textLabel = QLabel('Webcam')
-        self.textLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
-        # create a vertical box layout and add the two labels
-        vbox = QVBoxLayout()
-        vbox.addWidget(self.image_label)
-        vbox.addWidget(self.textLabel)
+        self.textLabel = QLabel('Smile! Your Picture will be taken in: ')
+        self.textLabel.setAlignment(Qt.AlignRight | Qt.AlignCenter)
+        self.textLabel.setFont(font)
+        self.textLabel.setMaximumHeight(100)
         
-        # set the vbox layout as the widgets layout
+        self.time_passed_qll = QtWidgets.QLabel()
+        self.time_passed_qll.setFont(font)
+        self.time_passed_qll.setMaximumHeight(100)
+
+        vbox = QVBoxLayout()
+        container = QWidget()
+        container.setStyleSheet("background-color: #FFD200;")
+        #container.setMaximumHeight(100)
+
+        hbox = QHBoxLayout(container)
+        hbox.addWidget(self.textLabel)
+        hbox.addWidget(self.time_passed_qll)
+        vbox.addWidget(self.image_label)
+        
+        vbox.addWidget(container)
+
         self.setLayout(vbox)
 
-        #self.showFullScreen()
+        self.setStyleSheet("background-color: #003E7E;")
+
         self.showFullScreen()
 
-        # create the video capture thread
         self.thread = VideoThread()
-        # connect its signal to the update_image slot
+
         self.thread.change_pixmap_signal.connect(self.update_image)
-        # start the thread
+
         self.thread.start()
             
         self.thread2 = Thread2()
         self.currentWindow = 1
         self.thread2.timer_finished.connect(self.capturePicture)
         self.thread2.start()
+
+        self.timer_start()
+        self.update_gui()
+
+    def timer_start(self):
+        self.time_left_int = DURATION_INT
+
+        self.my_qtimer = QtCore.QTimer(self)
+        self.my_qtimer.timeout.connect(self.timer_timeout)
+        self.my_qtimer.start(1000)
+
+        self.update_gui()
+
+    def timer_timeout(self):
+        self.time_left_int -= 1
+
+        if self.time_left_int == 0:
+            self.widget_counter_int = (self.widget_counter_int + 1) % 4
+            self.time_left_int = DURATION_INT
+
+        self.update_gui()
+
+    def update_gui(self):
+        self.time_passed_qll.setText(str(self.time_left_int))
 
     def closeEvent(self, event):
         self.thread.stop()
@@ -96,6 +143,7 @@ class App(QWidget):
         """Updates the image_label with a new opencv image"""
         qt_img = self.convert_cv_qt(cv_img)
         self.image_label.setPixmap(qt_img)
+        self.time_passed_qll.setText(str(self.time_left_int))
     
     def convert_cv_qt(self, cv_img):
         """Convert from an opencv image to QPixmap"""
@@ -107,6 +155,15 @@ class App(QWidget):
         return QPixmap.fromImage(p)
     
     def capturePicture(self):
+
+        Window.stylizedWin1 = Window()
+        Ui_StyleWindowOne.ui1 = Ui_StyleWindowOne()
+        Ui_StyleWindowOne.ui1.setupUi(Window.stylizedWin1)
+
+        Window.stylizedWin2 = Window()
+        Ui_StyleWindowTwo.ui2 = Ui_StyleWindowTwo()
+        Ui_StyleWindowTwo.ui2.setupUi(Window.stylizedWin2)
+
         if self.currentWindow == 1:
             ret,frame = self.thread.cap.read()
             cv2.imwrite('images/Camera Photo/Input Picture.jpg',frame)
@@ -147,301 +204,347 @@ class App(QWidget):
                 --in-path "Images/Camera Photo/Input Picture.jpg" \
                 --out-path "Images/Stylized Pictures/Stylized Wreck.jpg"')
 
-        elif self.currentWindow == 2:
-            styleWin1 = StyleWindowOne()
-
-        elif self.currentWindow == 3:
-            styleWin2 = StyleWindowTwo()
-
         App.changeWindow(self)
     
     def changeWindow(self):
+        
         if self.currentWindow == 1:
             creditsWin.showFullScreen()
             self.currentWindow = 2
 
         elif self.currentWindow == 2:
+            Window.stylizedWin1.showFullScreen()
             creditsWin.showMinimized()
-            styleWin1.showFullScreen()
             self.currentWindow = 3
 
         elif self.currentWindow == 3:
-            styleWin1.showMinimized()
-            styleWin2.showFullScreen()
+            Window.stylizedWin2.showFullScreen()
+            Window.stylizedWin1.showMinimized()
             self.currentWindow = 4
 
         elif self.currentWindow == 4:
-            styleWin2.showMinimized()
             a.showFullScreen()
+            Window.stylizedWin2.showMinimized()
             self.currentWindow = 1
 
-class StyleWindowOne(QMainWindow):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        uic.loadUi("GUI Layout/StyleWindowOne.ui", self)
+class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
-class StyleWindowTwo(QMainWindow):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        uic.loadUi("GUI Layout/StyleWindowTwo.ui", self)
+class Ui_StyleWindowOne(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(1920, 1080)
+        MainWindow.setMinimumSize(QtCore.QSize(1920, 1080))
+        MainWindow.setMaximumSize(QtCore.QSize(1920, 1080))
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        MainWindow.setFont(font)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        
+        self.ArtWithMachineLearningLabel = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(36)
+        self.ArtWithMachineLearningLabel.setFont(font)
+        self.ArtWithMachineLearningLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.ArtWithMachineLearningLabel.setObjectName("ArtWithMachineLearningLabel")
+        self.verticalLayout_2.addWidget(self.ArtWithMachineLearningLabel)
+        
+        self.OriginalStyleLabel = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(36)
+        self.OriginalStyleLabel.setFont(font)
+        self.OriginalStyleLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.OriginalStyleLabel.setObjectName("OriginalStyleLabel")
+        self.verticalLayout_2.addWidget(self.OriginalStyleLabel)
+        self.verticalLayout.addLayout(self.verticalLayout_2)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setMinimumSize(QtCore.QSize(426, 0))
+        self.label_3.setMaximumSize(QtCore.QSize(426, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        self.label_3.setFont(font)
+        self.label_3.setText("")
+        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_4.addWidget(self.label_3)
+        
+        self.LaMuseLabel = QtWidgets.QLabel(self.centralwidget)
+        self.LaMuseLabel.setMinimumSize(QtCore.QSize(426, 0))
+        self.LaMuseLabel.setMaximumSize(QtCore.QSize(426, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(24)
+        self.LaMuseLabel.setFont(font)
+        self.LaMuseLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.LaMuseLabel.setObjectName("LaMuseLabel")
+        self.horizontalLayout_4.addWidget(self.LaMuseLabel)
+        self.RainPrincessLabel = QtWidgets.QLabel(self.centralwidget)
+        self.RainPrincessLabel.setMinimumSize(QtCore.QSize(426, 0))
+        self.RainPrincessLabel.setMaximumSize(QtCore.QSize(426, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(24)
+        self.RainPrincessLabel.setFont(font)
+        self.RainPrincessLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.RainPrincessLabel.setObjectName("RainPrincessLabel")
+        self.horizontalLayout_4.addWidget(self.RainPrincessLabel)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setMinimumSize(QtCore.QSize(426, 0))
+        self.label.setMaximumSize(QtCore.QSize(426, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        self.label.setFont(font)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setObjectName("label")
+        self.horizontalLayout_4.addWidget(self.label)
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.graphicsView_Scream_Stylized_16 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_16.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_16.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_16.setStyleSheet("border-image: url(:/Logo/Logos/index.png);")
+        self.graphicsView_Scream_Stylized_16.setObjectName("graphicsView_Scream_Stylized_16")
+        self.horizontalLayout.addWidget(self.graphicsView_Scream_Stylized_16)
+        self.graphicsView_Scream_Stylized_18 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_18.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_18.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_18.setStyleSheet("Border-image: url(:/Resized/Resized Pictures/La Muse - Resized.jpg)")
+        self.graphicsView_Scream_Stylized_18.setObjectName("graphicsView_Scream_Stylized_18")
+        self.horizontalLayout.addWidget(self.graphicsView_Scream_Stylized_18)
+        self.graphicsView_Scream_Stylized_15 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_15.setMinimumSize(QtCore.QSize(384, 216))
+        self.graphicsView_Scream_Stylized_15.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_15.setStyleSheet("Border-image: url(:/Resized/Resized Pictures/Rain Princess - Resized.jpg)")
+        self.graphicsView_Scream_Stylized_15.setObjectName("graphicsView_Scream_Stylized_15")
+        self.horizontalLayout.addWidget(self.graphicsView_Scream_Stylized_15)
+        self.graphicsView_Scream_Stylized_20 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_20.setMinimumSize(QtCore.QSize(384, 216))
+        self.graphicsView_Scream_Stylized_20.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_20.setStyleSheet("border-image: url(:/Resized/Resized Pictures/Scream - Resized.jpg);")
+        self.graphicsView_Scream_Stylized_20.setObjectName("graphicsView_Scream_Stylized_20")
+        self.horizontalLayout.addWidget(self.graphicsView_Scream_Stylized_20)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.YourStylizedResultsLabel = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(36)
+        self.YourStylizedResultsLabel.setFont(font)
+        self.YourStylizedResultsLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.YourStylizedResultsLabel.setObjectName("YourStylizedResultsLabel")
+        self.verticalLayout.addWidget(self.YourStylizedResultsLabel)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.graphicsView_Scream_Stylized_13 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_13.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_13.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_13.setStyleSheet("border-image: url(Images/Camera Photo/Input Picture.jpg);")
+        self.graphicsView_Scream_Stylized_13.setObjectName("graphicsView_Scream_Stylized_13")
+        self.horizontalLayout_2.addWidget(self.graphicsView_Scream_Stylized_13)
+        self.graphicsView_Scream_Stylized_19 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_19.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_19.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_19.setStyleSheet("border-image: url(Images/Stylized Pictures/Stylized La Muse.jpg);")
+        self.graphicsView_Scream_Stylized_19.setObjectName("graphicsView_Scream_Stylized_19")
+        self.horizontalLayout_2.addWidget(self.graphicsView_Scream_Stylized_19)
+        self.graphicsView_Scream_Stylized_17 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_17.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_17.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_17.setStyleSheet("border-image: url(Images/Stylized Pictures/Stylized Rain Princess.jpg);")
+        self.graphicsView_Scream_Stylized_17.setObjectName("graphicsView_Scream_Stylized_17")
+        self.horizontalLayout_2.addWidget(self.graphicsView_Scream_Stylized_17)
+        self.graphicsView_Scream_Stylized_14 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_14.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_14.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_14.setStyleSheet("border-image: url(Images/Stylized Pictures/Stylized Scream.jpg);")
+        self.graphicsView_Scream_Stylized_14.setObjectName("graphicsView_Scream_Stylized_14")
+        self.horizontalLayout_2.addWidget(self.graphicsView_Scream_Stylized_14)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        spacerItem = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.verticalLayout.addItem(spacerItem)
+        MainWindow.setCentralWidget(self.centralwidget)
 
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-#class Ui_StylizedWindow(object):
-#    def __init__(self, *args, **kwargs):
-#        super().__init__(*args, **kwargs)
-#        uic.loadUi("GUI Layout/StyleWindowOne.ui", self)
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.ArtWithMachineLearningLabel.setText(_translate("MainWindow", "Art With Machine Learning"))
+        self.OriginalStyleLabel.setText(_translate("MainWindow", "Original Styles"))
+        self.LaMuseLabel.setText(_translate("MainWindow", "Picasso\'s\n"
+"La Muse"))
+        self.RainPrincessLabel.setText(_translate("MainWindow", "Leonid Afremov\'s\n"
+"Rain Princess"))
+        self.label.setText(_translate("MainWindow", "Edvard Munch\'s\n"
+"The Scream"))
+        self.YourStylizedResultsLabel.setText(_translate("MainWindow", "Your Stylized Results!"))
 
-#    def setupUi(self, MainWindow):
-#        MainWindow.setObjectName("MainWindow")
-#        MainWindow.resize(2175, 962)
-        
-#        self.centralwidget = QtWidgets.QWidget(MainWindow)
-#        self.centralwidget.setObjectName("centralwidget")
-#        self.graphicsView_LaMuse_Original = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_LaMuse_Original.setGeometry(QtCore.QRect(320, 240, 300, 300))
-#        self.graphicsView_LaMuse_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/La Muse - Resized.jpg);")
-#        self.graphicsView_LaMuse_Original.setObjectName("graphicsView_LaMuse_Original")
-#        self.ArtWithMachineLearningLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.ArtWithMachineLearningLabel.setGeometry(QtCore.QRect(0, 0, 2171, 61))
-        
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)
-#        self.ArtWithMachineLearningLabel.setFont(font)
-#        self.ArtWithMachineLearningLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.ArtWithMachineLearningLabel.setObjectName("ArtWithMachineLearningLabel")
-#        self.line_2 = QtWidgets.QFrame(self.centralwidget)
-#        self.line_2.setGeometry(QtCore.QRect(0, 50, 2171, 20))
-#        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
-#        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
-#        self.line_2.setObjectName("line_2")
-#        self.OriginalStyleLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.OriginalStyleLabel.setGeometry(QtCore.QRect(0, 60, 2171, 61))
-        
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)
-#        self.OriginalStyleLabel.setFont(font)
-#        self.OriginalStyleLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.OriginalStyleLabel.setObjectName("OriginalStyleLabel")
-        
-#        self.YourStylizedResultsLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.YourStylizedResultsLabel.setGeometry(QtCore.QRect(0, 550, 2171, 61))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)       
-#        self.YourStylizedResultsLabel.setFont(font)
-#        self.YourStylizedResultsLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.YourStylizedResultsLabel.setObjectName("YourStylizedResultsLabel")
-        
-#        self.line_3 = QtWidgets.QFrame(self.centralwidget)
-#        self.line_3.setGeometry(QtCore.QRect(0, 540, 2171, 20))
-#        self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
-#        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-#        self.line_3.setObjectName("line_3")
-        
-#        self.graphicsView_Input_Picture = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_Input_Picture.setGeometry(QtCore.QRect(10, 620, 300, 300))
-#        self.graphicsView_Input_Picture.setStyleSheet("background-image: url(Images/Camera Photo/Input Picture.jpg);")
-#        self.graphicsView_Input_Picture.setObjectName("graphicsView_Input_Picture")
-        
-#        self.LaMuseLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.LaMuseLabel.setGeometry(QtCore.QRect(320, 120, 301, 81))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)        
-#        self.LaMuseLabel.setFont(font)
-#        self.LaMuseLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.LaMuseLabel.setObjectName("LaMuseLabel")
-        
-#        self.graphicsView_RainPrincess_Original = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_RainPrincess_Original.setGeometry(QtCore.QRect(630, 240, 300, 300))
-#        self.graphicsView_RainPrincess_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Rain Princess - Resized.jpg);")
-#        self.graphicsView_RainPrincess_Original.setObjectName("graphicsView_RainPrincess_Original")
-        
-#        self.PicassoLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.PicassoLabel.setGeometry(QtCore.QRect(320, 180, 301, 61))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)
-#        self.PicassoLabel.setFont(font)
-#        self.PicassoLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.PicassoLabel.setObjectName("PicassoLabel")
-        
-#        self.RainPrincessLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.RainPrincessLabel.setGeometry(QtCore.QRect(630, 120, 301, 81))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)        
-#        self.RainPrincessLabel.setFont(font)
-#        self.RainPrincessLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.RainPrincessLabel.setObjectName("RainPrincessLabel")
-        
-#        self.LeonidAfremovLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.LeonidAfremovLabel.setGeometry(QtCore.QRect(630, 180, 301, 61))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)        
-#        self.LeonidAfremovLabel.setFont(font)
-#        self.LeonidAfremovLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.LeonidAfremovLabel.setObjectName("LeonidAfremovLabel")
-        
-#        self.EdvardMunchLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.EdvardMunchLabel.setGeometry(QtCore.QRect(940, 180, 301, 61))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36) 
-#        self.EdvardMunchLabel.setFont(font)
-#        self.EdvardMunchLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.EdvardMunchLabel.setObjectName("EdvardMunchLabel")
-        
-#        self.ScreamLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.ScreamLabel.setGeometry(QtCore.QRect(940, 120, 301, 81))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)        
-#        self.ScreamLabel.setFont(font)
-#        self.ScreamLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.ScreamLabel.setObjectName("ScreamLabel")
-        
-#        self.graphicsView_Scream_Original = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_Scream_Original.setGeometry(QtCore.QRect(940, 240, 300, 300))
-#        self.graphicsView_Scream_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Scream - Resized.jpg);")
-#        self.graphicsView_Scream_Original.setObjectName("graphicsView_Scream_Original")
-        
-#        self.VanGoghLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.VanGoghLabel.setGeometry(QtCore.QRect(1250, 180, 301, 61))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)        
-#        self.VanGoghLabel.setFont(font)
-#        self.VanGoghLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.VanGoghLabel.setObjectName("VanGoghLabel")
-        
-#        self.WreckLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.WreckLabel.setGeometry(QtCore.QRect(1250, 120, 301, 81))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)       
-#        self.WreckLabel.setFont(font)
-#        self.WreckLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.WreckLabel.setObjectName("WreckLabel")
-        
-#        self.graphicsView_Wreck_Original = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_Wreck_Original.setGeometry(QtCore.QRect(1250, 240, 300, 300))
-#        self.graphicsView_Wreck_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Wreck - Resized.jpg);")
-#        self.graphicsView_Wreck_Original.setObjectName("graphicsView_Wreck_Original")
-        
-#        self.FrancisPicabiaLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.FrancisPicabiaLabel.setGeometry(QtCore.QRect(1560, 180, 301, 61))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)        
-#        self.FrancisPicabiaLabel.setFont(font)
-#        self.FrancisPicabiaLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.FrancisPicabiaLabel.setObjectName("FrancisPicabiaLabel")
-        
-#        self.UdnieLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.UdnieLabel.setGeometry(QtCore.QRect(1560, 120, 301, 81))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)        
-#        self.UdnieLabel.setFont(font)
-#        self.UdnieLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.UdnieLabel.setObjectName("UdnieLabel")
-#        self.graphicsView_Udnie_Original = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_Udnie_Original.setGeometry(QtCore.QRect(1560, 240, 300, 300))
-#        self.graphicsView_Udnie_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Udnie - Resized.jpg);")
-#        self.graphicsView_Udnie_Original.setObjectName("graphicsView_Udnie_Original")
-        
-#        self.HokusaiLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.HokusaiLabel.setGeometry(QtCore.QRect(1870, 180, 301, 61))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)       
-#        self.HokusaiLabel.setFont(font)
-#        self.HokusaiLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.HokusaiLabel.setObjectName("HokusaiLabel")
-        
-#        self.GreatWaveLabel = QtWidgets.QLabel(self.centralwidget)
-#        self.GreatWaveLabel.setGeometry(QtCore.QRect(1870, 120, 301, 81))
-#        font = QtGui.QFont()
-#        font.setFamily("Vladimir Script")
-#        font.setPointSize(36)        
-#        self.GreatWaveLabel.setFont(font)
-#        self.GreatWaveLabel.setAlignment(QtCore.Qt.AlignCenter)
-#        self.GreatWaveLabel.setObjectName("GreatWaveLabel")
-#        self.graphicsView_GreatWave_Original = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_GreatWave_Original.setGeometry(QtCore.QRect(1870, 240, 300, 300))
-#        self.graphicsView_GreatWave_Original.setStyleSheet("background-image: url(:/Resized/Resized Pictures/Great Wave - Resized.jpg);")
-#        self.graphicsView_GreatWave_Original.setObjectName("graphicsView_GreatWave_Original")
-        
-#        self.graphicsView_LaMuse_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_LaMuse_Stylized.setGeometry(QtCore.QRect(320, 620, 300, 300))
-#        self.graphicsView_LaMuse_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized La Muse.jpg);")
-#        self.graphicsView_LaMuse_Stylized.setObjectName("graphicsView_LaMuse_Stylized")
-        
-#        self.graphicsView_Udnie_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_Udnie_Stylized.setGeometry(QtCore.QRect(1560, 620, 300, 300))
-#        self.graphicsView_Udnie_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Udnie.jpg);")
-#        self.graphicsView_Udnie_Stylized.setObjectName("graphicsView_Udnie_Stylized")
-        
-#        self.graphicsView_GreatWave_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_GreatWave_Stylized.setGeometry(QtCore.QRect(1870, 620, 300, 300))
-#        self.graphicsView_GreatWave_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Great Wave.jpg);")
-#        self.graphicsView_GreatWave_Stylized.setObjectName("graphicsView_GreatWave_Stylized")
-        
-#        self.graphicsView_RainPrincess_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_RainPrincess_Stylized.setGeometry(QtCore.QRect(630, 620, 300, 300))
-#        self.graphicsView_RainPrincess_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Rain Princess.jpg);")
-#        self.graphicsView_RainPrincess_Stylized.setObjectName("graphicsView_RainPrincess_Stylized")
-        
-#        self.graphicsView_Scream_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_Scream_Stylized.setGeometry(QtCore.QRect(940, 620, 300, 300))
-#        self.graphicsView_Scream_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Scream.jpg);")
-#        self.graphicsView_Scream_Stylized.setObjectName("graphicsView_Scream_Stylized")
-        
-#        self.graphicsView_Wreck_Stylized = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_Wreck_Stylized.setGeometry(QtCore.QRect(1250, 620, 300, 300))
-#        self.graphicsView_Wreck_Stylized.setStyleSheet("background-image: url(Images/Stylized Pictures/Stylized Wreck.jpg);")
-#        self.graphicsView_Wreck_Stylized.setObjectName("graphicsView_Wreck_Stylized")
-        
-#        self.graphicsView_Input_Picture_2 = QtWidgets.QGraphicsView(self.centralwidget)
-#        self.graphicsView_Input_Picture_2.setGeometry(QtCore.QRect(10, 240, 300, 300))
-#        self.graphicsView_Input_Picture_2.setStyleSheet("background-image: url(:/Logos/Logos/index.png);")
-#        self.graphicsView_Input_Picture_2.setObjectName("graphicsView_Input_Picture_2")
-        
-#        MainWindow.setCentralWidget(self.centralwidget)
-#        self.menubar = QtWidgets.QMenuBar(MainWindow)
-#        self.menubar.setGeometry(QtCore.QRect(0, 0, 2175, 21))
-#        self.menubar.setObjectName("menubar")
-#        MainWindow.setMenuBar(self.menubar)
-#        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-#        self.statusbar.setObjectName("statusbar")
-#        MainWindow.setStatusBar(self.statusbar)
+class Ui_StyleWindowTwo(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(1920, 1080)
+        MainWindow.setMinimumSize(QtCore.QSize(1920, 1080))
+        MainWindow.setMaximumSize(QtCore.QSize(1920, 1080))
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        MainWindow.setFont(font)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.ArtWithMachineLearningLabel = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(36)
+        self.ArtWithMachineLearningLabel.setFont(font)
+        self.ArtWithMachineLearningLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.ArtWithMachineLearningLabel.setObjectName("ArtWithMachineLearningLabel")
+        self.verticalLayout_2.addWidget(self.ArtWithMachineLearningLabel)
+        self.OriginalStyleLabel = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(36)
+        self.OriginalStyleLabel.setFont(font)
+        self.OriginalStyleLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.OriginalStyleLabel.setObjectName("OriginalStyleLabel")
+        self.verticalLayout_2.addWidget(self.OriginalStyleLabel)
+        self.verticalLayout.addLayout(self.verticalLayout_2)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setMinimumSize(QtCore.QSize(426, 0))
+        self.label_3.setMaximumSize(QtCore.QSize(426, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        self.label_3.setFont(font)
+        self.label_3.setText("")
+        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_4.addWidget(self.label_3)
+        self.LaMuseLabel = QtWidgets.QLabel(self.centralwidget)
+        self.LaMuseLabel.setMinimumSize(QtCore.QSize(426, 0))
+        self.LaMuseLabel.setMaximumSize(QtCore.QSize(426, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(24)
+        self.LaMuseLabel.setFont(font)
+        self.LaMuseLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.LaMuseLabel.setObjectName("LaMuseLabel")
+        self.horizontalLayout_4.addWidget(self.LaMuseLabel)
+        self.RainPrincessLabel = QtWidgets.QLabel(self.centralwidget)
+        self.RainPrincessLabel.setMinimumSize(QtCore.QSize(426, 0))
+        self.RainPrincessLabel.setMaximumSize(QtCore.QSize(426, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(24)
+        self.RainPrincessLabel.setFont(font)
+        self.RainPrincessLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.RainPrincessLabel.setObjectName("RainPrincessLabel")
+        self.horizontalLayout_4.addWidget(self.RainPrincessLabel)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setMinimumSize(QtCore.QSize(426, 0))
+        self.label.setMaximumSize(QtCore.QSize(426, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        self.label.setFont(font)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setObjectName("label")
+        self.horizontalLayout_4.addWidget(self.label)
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.graphicsView_Scream_Stylized_16 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_16.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_16.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_16.setStyleSheet("border-image: url(:/Logo/Logos/College of Engineering Logo.png);")
+        self.graphicsView_Scream_Stylized_16.setObjectName("graphicsView_Scream_Stylized_16")
+        self.horizontalLayout.addWidget(self.graphicsView_Scream_Stylized_16)
+        self.graphicsView_Scream_Stylized_18 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_18.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_18.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_18.setStyleSheet("border-image: url(:/Original/Original Pictures/Shipwreck_turner.jpg);")
+        self.graphicsView_Scream_Stylized_18.setObjectName("graphicsView_Scream_Stylized_18")
+        self.horizontalLayout.addWidget(self.graphicsView_Scream_Stylized_18)
+        self.graphicsView_Scream_Stylized_15 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_15.setMinimumSize(QtCore.QSize(384, 216))
+        self.graphicsView_Scream_Stylized_15.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_15.setStyleSheet("border-image: url(:/Original/Original Pictures/Udnie.jpg);")
+        self.graphicsView_Scream_Stylized_15.setObjectName("graphicsView_Scream_Stylized_15")
+        self.horizontalLayout.addWidget(self.graphicsView_Scream_Stylized_15)
+        self.graphicsView_Scream_Stylized_20 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_20.setMinimumSize(QtCore.QSize(384, 216))
+        self.graphicsView_Scream_Stylized_20.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_20.setStyleSheet("border-image: url(:/Original/Original Pictures/Great Wave - Original.jpg);")
+        self.graphicsView_Scream_Stylized_20.setObjectName("graphicsView_Scream_Stylized_20")
+        self.horizontalLayout.addWidget(self.graphicsView_Scream_Stylized_20)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.YourStylizedResultsLabel = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Source Sans Pro")
+        font.setPointSize(36)
+        self.YourStylizedResultsLabel.setFont(font)
+        self.YourStylizedResultsLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.YourStylizedResultsLabel.setObjectName("YourStylizedResultsLabel")
+        self.verticalLayout.addWidget(self.YourStylizedResultsLabel)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.graphicsView_Scream_Stylized_13 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_13.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_13.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_13.setStyleSheet("border-image: url(Images/Camera Photo/Input Picture.jpg);")
+        self.graphicsView_Scream_Stylized_13.setObjectName("graphicsView_Scream_Stylized_13")
+        self.horizontalLayout_2.addWidget(self.graphicsView_Scream_Stylized_13)
+        self.graphicsView_Scream_Stylized_19 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_19.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_19.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_19.setStyleSheet("border-image: url(Images/Stylized Pictures/Stylized Wreck.jpg);")
+        self.graphicsView_Scream_Stylized_19.setObjectName("graphicsView_Scream_Stylized_19")
+        self.horizontalLayout_2.addWidget(self.graphicsView_Scream_Stylized_19)
+        self.graphicsView_Scream_Stylized_17 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_17.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_17.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_17.setStyleSheet("border-image: url(Images/Stylized Pictures/Stylized Udnie.jpg);")
+        self.graphicsView_Scream_Stylized_17.setObjectName("graphicsView_Scream_Stylized_17")
+        self.horizontalLayout_2.addWidget(self.graphicsView_Scream_Stylized_17)
+        self.graphicsView_Scream_Stylized_14 = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView_Scream_Stylized_14.setMinimumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_14.setMaximumSize(QtCore.QSize(426, 240))
+        self.graphicsView_Scream_Stylized_14.setStyleSheet("border-image: url(Images/Stylized Pictures/Stylized Great Wave.jpg);")
+        self.graphicsView_Scream_Stylized_14.setObjectName("graphicsView_Scream_Stylized_14")
+        self.horizontalLayout_2.addWidget(self.graphicsView_Scream_Stylized_14)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        spacerItem = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.verticalLayout.addItem(spacerItem)
+        MainWindow.setCentralWidget(self.centralwidget)
 
-#        self.retranslateUi(MainWindow)
-#        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-#    def retranslateUi(self, MainWindow):
-#        _translate = QtCore.QCoreApplication.translate
-#        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-#        self.ArtWithMachineLearningLabel.setText(_translate("MainWindow", "Art With Machine Learning"))
-#        self.OriginalStyleLabel.setText(_translate("MainWindow", "Original Styles"))
-#        self.YourStylizedResultsLabel.setText(_translate("MainWindow", "Your Stylized Results!"))
-#        self.LaMuseLabel.setText(_translate("MainWindow", "Picasso\'s"))
-#        self.PicassoLabel.setText(_translate("MainWindow", "La Muse"))
-#        self.RainPrincessLabel.setText(_translate("MainWindow", "Leonid Afremov\'s"))
-#        self.LeonidAfremovLabel.setText(_translate("MainWindow", "Rain Princess"))
-#        self.EdvardMunchLabel.setText(_translate("MainWindow", "The Scream"))
-#        self.ScreamLabel.setText(_translate("MainWindow", "Edvard Munch\'s"))
-#        self.VanGoghLabel.setText(_translate("MainWindow", "Wreck"))
-#        self.WreckLabel.setText(_translate("MainWindow", "Van Gogh\'s"))
-#        self.FrancisPicabiaLabel.setText(_translate("MainWindow", "Udnie"))
-#        self.UdnieLabel.setText(_translate("MainWindow", "Francis Picabia\'s"))
-#        self.HokusaiLabel.setText(_translate("MainWindow", "Great Wave"))
-#        self.GreatWaveLabel.setText(_translate("MainWindow", "Hokusai\'s"))
-
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.ArtWithMachineLearningLabel.setText(_translate("MainWindow", "Art With Machine Learning"))
+        self.OriginalStyleLabel.setText(_translate("MainWindow", "Original Styles"))
+        self.LaMuseLabel.setText(_translate("MainWindow", "J. M. W. Turner\'s\n"
+"The Shipwreck of The Minotaur"))
+        self.RainPrincessLabel.setText(_translate("MainWindow", "Francis Picabia\'s\n"
+"Udnie"))
+        self.label.setText(_translate("MainWindow", "Hokusai\'s\n"
+"Great Wave"))
+        self.YourStylizedResultsLabel.setText(_translate("MainWindow", "Your Stylized Results!"))
 
 class CreditsWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -451,14 +554,23 @@ class CreditsWindow(QMainWindow):
 if __name__=="__main__":
     app = QApplication(sys.argv)
     a = App()
-    #stylizedWin = Window()
-    #ui = Ui_StylizedWindow()
-    #ui.setupUi(stylizedWin)
-    styleWin1 = StyleWindowOne()
-    styleWin2 = StyleWindowTwo()
+    
+    stylizedWin1 = Window()
+    ui1 = Ui_StyleWindowOne()
+    ui1.setupUi(stylizedWin1)
+    
+    stylizedWin2 = Window()
+    ui2 = Ui_StyleWindowTwo()
+    ui2.setupUi(stylizedWin2)
+    
+    #styleWin1 = StyleWindowOne()
+    #styleWin2 = StyleWindowTwo()
+    
     creditsWin = CreditsWindow()
+    
     #creditsWin.show()
     #styleWin1.show()
     #styleWin2.show()
+    
     a.show()
     sys.exit(app.exec_())
