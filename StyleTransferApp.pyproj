@@ -27,6 +27,8 @@
   <ItemGroup>
     <Folder Include="GUI Layout" />
     <Folder Include="Checkpoints\" />
+    <Folder Include="Images\" />
+    <Folder Include="Images\Camera Photo\" />
     <Folder Include="Program Actions" />
   </ItemGroup>
   <ItemGroup>
@@ -36,6 +38,7 @@
     <Content Include="Checkpoints\udnie.ckpt" />
     <Content Include="Checkpoints\wave.ckpt" />
     <Content Include="Checkpoints\wreck.ckpt" />
+    <Content Include="Images\Camera Photo\myhc_333195.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

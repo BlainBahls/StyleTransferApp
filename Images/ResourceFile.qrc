@@ -10,6 +10,7 @@
     <file>Camera Photo/Input Picture.jpg</file>
   </qresource>
   <qresource prefix="Original">
+    <file>Original Pictures/Stylized La Muse.jpg</file>
     <file>Original Pictures/Great Wave - Original.jpg</file>
     <file>Original Pictures/La Muse - Original.jpg</file>
     <file>Original Pictures/Rain Princess - Original.jpg</file>
@@ -20,6 +21,9 @@
     <file>Original Pictures/Udnie.jpg</file>
     <file>Original Pictures/Wreck - Original.jpg</file>
     <file>Original Pictures/wreck.jpg</file>
+  </qresource>
+  <qresource prefix="Credits Window">
+    <file>Original Pictures/Stylized La Muse.jpg</file>
   </qresource>
   <qresource prefix="Resized">
     <file>Resized Pictures/Great Wave - Resized.jpg</file>

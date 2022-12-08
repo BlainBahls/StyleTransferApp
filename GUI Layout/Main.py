@@ -10,7 +10,7 @@ import time
 import cv2
 import sys
 
-DURATION_INT = 15
+DURATION_INT = 20
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -21,17 +21,13 @@ class VideoThread(QThread):
         self.cap = cv2.VideoCapture(0)
 
     def run(self):
-        # capture from web cam
-        
         while self._run_flag:
             ret, cv_img = self.cap.read()
             if ret:
                 self.change_pixmap_signal.emit(cv_img)
-        # shut down capture system
         self.cap.release()
 
     def stop(self):
-        """Sets run flag to False and waits for thread to finish"""
         self._run_flag = False
         self.wait()
 
@@ -42,7 +38,7 @@ class Thread2(QThread):
         super().__init__()
         self._run_flag = True
         self.timer = QTimer()
-        self.timer.start(15000) #normal value = 20000
+        self.timer.start(20000)
         
     def run(self):
         print("Hello World")
@@ -66,7 +62,7 @@ class App(QWidget):
         
         font = QtGui.QFont()
         font.setFamily("Source Sans Pro")
-        font.setPointSize(24)
+        font.setPointSize(64)
 
         self.image_label = QLabel(self)
         self.image_label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
@@ -84,7 +80,6 @@ class App(QWidget):
         vbox = QVBoxLayout()
         container = QWidget()
         container.setStyleSheet("background-color: #FFD200;")
-        #container.setMaximumHeight(100)
 
         hbox = QHBoxLayout(container)
         hbox.addWidget(self.textLabel)
@@ -140,13 +135,11 @@ class App(QWidget):
 
     @pyqtSlot(np.ndarray)
     def update_image(self, cv_img):
-        """Updates the image_label with a new opencv image"""
         qt_img = self.convert_cv_qt(cv_img)
         self.image_label.setPixmap(qt_img)
         self.time_passed_qll.setText(str(self.time_left_int))
     
     def convert_cv_qt(self, cv_img):
-        """Convert from an opencv image to QPixmap"""
         rgb_image = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
         bytes_per_line = ch * w
@@ -563,14 +556,7 @@ if __name__=="__main__":
     ui2 = Ui_StyleWindowTwo()
     ui2.setupUi(stylizedWin2)
     
-    #styleWin1 = StyleWindowOne()
-    #styleWin2 = StyleWindowTwo()
-    
     creditsWin = CreditsWindow()
-    
-    #creditsWin.show()
-    #styleWin1.show()
-    #styleWin2.show()
     
     a.show()
     sys.exit(app.exec_())
