@@ -239,7 +239,6 @@ class Ui_StyleWindowOne(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        
         self.ArtWithMachineLearningLabel = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Source Sans Pro")
@@ -248,7 +247,6 @@ class Ui_StyleWindowOne(object):
         self.ArtWithMachineLearningLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.ArtWithMachineLearningLabel.setObjectName("ArtWithMachineLearningLabel")
         self.verticalLayout_2.addWidget(self.ArtWithMachineLearningLabel)
-        
         self.OriginalStyleLabel = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Source Sans Pro")
@@ -266,11 +264,9 @@ class Ui_StyleWindowOne(object):
         font = QtGui.QFont()
         font.setPointSize(24)
         self.label_3.setFont(font)
-        self.label_3.setText("")
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_4.addWidget(self.label_3)
-        
         self.LaMuseLabel = QtWidgets.QLabel(self.centralwidget)
         self.LaMuseLabel.setMinimumSize(QtCore.QSize(426, 0))
         self.LaMuseLabel.setMaximumSize(QtCore.QSize(426, 16777215))
@@ -375,6 +371,7 @@ class Ui_StyleWindowOne(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.ArtWithMachineLearningLabel.setText(_translate("MainWindow", "Art With Machine Learning"))
         self.OriginalStyleLabel.setText(_translate("MainWindow", "Original Styles"))
+        self.label_3.setText(_translate("MainWindow", "<html><center>Your Next Three Results Will Be<br> Ready In 20 Seconds</cenmter></html>"))
         self.LaMuseLabel.setText(_translate("MainWindow", "Picasso\'s\n"
 "La Muse"))
         self.RainPrincessLabel.setText(_translate("MainWindow", "Leonid Afremov\'s\n"
@@ -423,11 +420,15 @@ class Ui_StyleWindowTwo(object):
         font = QtGui.QFont()
         font.setPointSize(24)
         self.label_3.setFont(font)
-        self.label_3.setText("")
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_4.addWidget(self.label_3)
         self.LaMuseLabel = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.LaMuseLabel.sizePolicy().hasHeightForWidth())
+        self.LaMuseLabel.setSizePolicy(sizePolicy)
         self.LaMuseLabel.setMinimumSize(QtCore.QSize(426, 0))
         self.LaMuseLabel.setMaximumSize(QtCore.QSize(426, 16777215))
         font = QtGui.QFont()
@@ -531,6 +532,7 @@ class Ui_StyleWindowTwo(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.ArtWithMachineLearningLabel.setText(_translate("MainWindow", "Art With Machine Learning"))
         self.OriginalStyleLabel.setText(_translate("MainWindow", "Original Styles"))
+        self.label_3.setText(_translate("MainWindow", "<html><center>The Camera Window Will<br>Open In 20 Seconds</cenmter></html>"))
         self.LaMuseLabel.setText(_translate("MainWindow", "J. M. W. Turner\'s\n"
 "The Shipwreck of The Minotaur"))
         self.RainPrincessLabel.setText(_translate("MainWindow", "Francis Picabia\'s\n"

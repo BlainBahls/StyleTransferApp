@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="text">
-         <string/>
+         <string>&lt;html&gt;&lt;center&gt;The Camera Window Will&lt;br&gt;Open In 20 Seconds&lt;/cenmter&gt;&lt;/html&gt;</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -99,6 +99,12 @@
       </item>
       <item>
        <widget class="QLabel" name="LaMuseLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>426</width>

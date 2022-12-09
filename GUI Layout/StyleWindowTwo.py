@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_StyleWindowTwo(object):
+class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1920, 1080)
@@ -51,11 +51,15 @@ class Ui_StyleWindowTwo(object):
         font = QtGui.QFont()
         font.setPointSize(24)
         self.label_3.setFont(font)
-        self.label_3.setText("")
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_4.addWidget(self.label_3)
         self.LaMuseLabel = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.LaMuseLabel.sizePolicy().hasHeightForWidth())
+        self.LaMuseLabel.setSizePolicy(sizePolicy)
         self.LaMuseLabel.setMinimumSize(QtCore.QSize(426, 0))
         self.LaMuseLabel.setMaximumSize(QtCore.QSize(426, 16777215))
         font = QtGui.QFont()
@@ -159,6 +163,7 @@ class Ui_StyleWindowTwo(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.ArtWithMachineLearningLabel.setText(_translate("MainWindow", "Art With Machine Learning"))
         self.OriginalStyleLabel.setText(_translate("MainWindow", "Original Styles"))
+        self.label_3.setText(_translate("MainWindow", "<html><center>The Camera Window Will<br>Open In 20 Seconds</cenmter></html>"))
         self.LaMuseLabel.setText(_translate("MainWindow", "J. M. W. Turner\'s\n"
 "The Shipwreck of The Minotaur"))
         self.RainPrincessLabel.setText(_translate("MainWindow", "Francis Picabia\'s\n"
@@ -167,13 +172,3 @@ class Ui_StyleWindowTwo(object):
 "Great Wave"))
         self.YourStylizedResultsLabel.setText(_translate("MainWindow", "Your Stylized Results!"))
 import ResourceFile_rc
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())

@@ -90,7 +90,7 @@
          </font>
         </property>
         <property name="text">
-         <string/>
+         <string>&lt;html&gt;&lt;center&gt;Your Next Three Results Will Be&lt;br&gt; Ready In 20 Seconds&lt;/cenmter&gt;&lt;/html&gt;</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

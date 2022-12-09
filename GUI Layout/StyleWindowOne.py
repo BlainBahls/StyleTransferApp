@@ -51,7 +51,6 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(24)
         self.label_3.setFont(font)
-        self.label_3.setText("")
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_4.addWidget(self.label_3)
@@ -159,6 +158,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.ArtWithMachineLearningLabel.setText(_translate("MainWindow", "Art With Machine Learning"))
         self.OriginalStyleLabel.setText(_translate("MainWindow", "Original Styles"))
+        self.label_3.setText(_translate("MainWindow", "<html><center>Your Next Three Results Will Be<br> Ready In 20 Seconds</cenmter></html>"))
         self.LaMuseLabel.setText(_translate("MainWindow", "Picasso\'s\n"
 "La Muse"))
         self.RainPrincessLabel.setText(_translate("MainWindow", "Leonid Afremov\'s\n"
@@ -167,13 +167,3 @@ class Ui_MainWindow(object):
 "The Scream"))
         self.YourStylizedResultsLabel.setText(_translate("MainWindow", "Your Stylized Results!"))
 import ResourceFile_rc
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
